@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Películas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            background-color: #007BFF;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            position: relative;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(odd) {
+            background-color: #e0f7fa;
+        }
+        input[type="text"], input[type="number"], input[type="date"], select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        .form-container input, .form-container select {
+            margin-bottom: 10px;
+        }
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px; /* Espacio adicional para la búsqueda */
+        }
+        .filter-container input {
+            width: 50%; /* Ancho del buscador */
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .actions button {
+            margin-right: 5px; /* Espacio adicional entre los botones */
+        }
+        .actions button:last-child {
+            margin-right: 0; /* Quitar margen derecho en el último botón */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Registro de Películas Vistas</h1>
+
+    <div class="form-container">
+        <div class="form-row">
+            <input type="number" id="ano" placeholder="Año">
+            <input type="text" id="duracion" placeholder="Duración">
+            <input type="date" id="fecha" placeholder="Fecha Vista">
+        </div>
+        <input type="text" id="titulo" placeholder="Título">
+        <input type="text" id="actores" placeholder="Actores Protagonistas">
+        <input type="text" id="director" placeholder="Director">
+        <input type="text" id="genero" placeholder="Género">
+        <input type="text" id="pais" placeholder="País Origen">
+        <input type="text" id="clasificacion" placeholder="Clasificación">
+        <input type="text" id="plataforma" placeholder="Plataforma">
+        <input type="text" id="comentarios" placeholder="Comentarios">
+        <button onclick="agregarPelicula()">Agregar Película</button>
+    </div>
+
+    <div class="filter-container">
+        <input type="text" id="buscar-titulo" placeholder="Buscar por Título" onkeyup="filtrarTitulo()">
+    </div>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>N.º de Película</th>
+                <th>Año</th>
+                <th>Título</th>
+                <th>Actores Protagonistas</th>
+                <th>Duración</th>
+                <th>Director</th>
+                <th>Género</th>
+                <th>Fecha Vista</th>
+                <th>País Origen</th>
+                <th>Clasificación</th>
+                <th>Plataforma</th>
+                <th>Comentarios</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="peliculas-body">
+            <!-- Las nuevas películas se agregarán aquí -->
+        </tbody>
+    </table>
+
+    <script>
+        let contadorPeliculas = 1;
+
+        document.addEventListener('DOMContentLoaded', cargarPeliculas);
+
+        function agregarPelicula() {
+            var ano = document.getElementById('ano').value;
+            var titulo = document.getElementById('titulo').value;
+            var actores = document.getElementById('actores').value;
+            var duracion = document.getElementById('duracion').value;
+            var director = document.getElementById('director').value;
+            var genero = document.getElementById('genero').value;
+            var fecha = document.getElementById('fecha').value;
+            var pais = document.getElementById('pais').value;
+            var clasificacion = document.getElementById('clasificacion').value;
+            var plataforma = document.getElementById('plataforma').value;
+            var comentarios = document.getElementById('comentarios').value;
+
+            var pelicula = {
+                ano, titulo, actores, duracion, director, genero, fecha, pais, clasificacion, plataforma, comentarios
+            };
+
+            guardarPelicula(pelicula);
+            agregarFila(pelicula);
+            limpiarCampos();
+        }
+
+        function agregarFila(pelicula) {
+            var table = document.getElementById("peliculas-body");
+            var row = table.insertRow();
+
+            row.insertCell(0).innerHTML = contadorPeliculas++;
+            row.insertCell(1).innerHTML = pelicula.ano;
+            row.insertCell(2).innerHTML = pelicula.titulo;
+            row.insertCell(3).innerHTML = pelicula.actores;
+            row.insertCell(4).innerHTML = pelicula.duracion;
+            row.insertCell(5).innerHTML = pelicula.director;
+            row.insertCell(6).innerHTML = pelicula.genero;
+            row.insertCell(7).innerHTML = pelicula.fecha.split("-").reverse().join("/");
+            row.insertCell(8).innerHTML = pelicula.pais;
+            row.insertCell(9).innerHTML = pelicula.clasificacion;
+            row.insertCell(10).innerHTML = pelicula.plataforma;
+            row.insertCell(11).innerHTML = pelicula.comentarios;
+            row.insertCell(12).innerHTML = '<div class="actions"><button onclick="editarPelicula(this)">Editar</button><button onclick="eliminarPelicula(this)">Eliminar</button></div>';
+        }
+
+        function limpiarCampos() {
+            document.getElementById('ano').value = "";
+            document.getElementById('titulo').value = "";
+            document.getElementById('actores').value = "";
+            document.getElementById('duracion').value = "";
+            document.getElementById('director').value = "";
+            document.getElementById('genero').value = "";
+            document.getElementById('fecha').value = "";
+            document.getElementById('pais').value = "";
+            document.getElementById('clasificacion').value = "";
+            document.getElementById('plataforma').value = "";
+            document.getElementById('comentarios').value = "";
+        }
+
+        function guardarPelicula(pelicula) {
+            let peliculas = JSON.parse(localStorage.getItem('peliculas')) || [];
+            peliculas.push(pelicula);
+            localStorage.setItem('peliculas', JSON.stringify(peliculas));
+        }
+
+        function cargarPeliculas() {
+            let peliculas = JSON.parse(localStorage.getItem('peliculas')) || [];
+            peliculas.forEach(pelicula => {
+                agregarFila(pelicula);
+            });
+        }
+
+        function eliminarPelicula(button) {
+            var row = button.parentNode.parentNode.parentNode;
+            var index = row.rowIndex - 1;
+            row.parentNode.removeChild(row);
+
+            eliminarPeliculaDeLocalStorage(index);
+            actualizarNumerosPeliculas();
+        }
+
+        function eliminarPeliculaDeLocalStorage(index) {
+            let peliculas = JSON.parse(localStorage.getItem('peliculas')) || [];
+            peliculas.splice(index, 1);
+            localStorage.setItem('peliculas', JSON.stringify(peliculas));
+        }
+
+        function actualizarNumerosPeliculas() {
+            var table = document.getElementById("peliculas-body");
+            contadorPeliculas = 1;
+            for (var i = 0, row; row = table.rows[i]; i++) {
+                row.cells[0].innerHTML = contadorPeliculas++;
+            }
+        }
+
+        function filtrarTitulo() {
+            var input = document.getElementById('buscar-titulo');
+            var filter = input.value.toUpperCase();
+            var table = document.getElementById("peliculas-body");
+            var rows = table.getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var titleCell = rows[i].getElementsByTagName("td")[2];
+                if (titleCell) {
+                    var txtValue = titleCell.textContent || titleCell.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function editarPelicula(button) {
+            var row = button.parentNode.parentNode.parentNode;
+            var cells = row.getElementsByTagName("td");
+
+            document.getElementById('ano').value = cells[1].innerText;
+            document.getElementById('titulo').value = cells[2].innerText;
+            document.getElementById('actores').value = cells[3].innerText;
+            document.getElementById('duracion').value = cells[4].innerText;
+            document.getElementById('director').value = cells[5].innerText;
+            document.getElementById('genero').value = cells[6].innerText;
+            document.getElementById('fecha').value = cells[7].innerText.split("/").reverse().join("-");
+            document.getElementById('pais').value = cells[8].innerText;
+            document.getElementById('clasificacion').value = cells[9].innerText;
+            document.getElementById('plataforma').value = cells[10].innerText;
+            document.getElementById('comentarios').value = cells[11].innerText;
+
+            eliminarPelicula(button);
+        }
+    </script>
+
+</body>
+</html>
